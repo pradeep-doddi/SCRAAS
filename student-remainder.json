@@ -1,0 +1,425 @@
+{
+  "name": "student-remainder",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -688,
+        -32
+      ],
+      "id": "de8a9c10-d8e4-4c5a-ae3e-bd673b62f15b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -288,
+        -32
+      ],
+      "id": "22963ee6-db87-4b5d-a392-9fce5e21f36c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Section }}",
+                    "rightValue": "a",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "87897e71-7216-4842-833e-960a2df6251a"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b3f69659-4322-4898-bf51-0cbd68f9e82f",
+                    "leftValue": "={{ $json.Section }}",
+                    "rightValue": "b",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "09485edc-14e2-4f7e-984c-df6eff6460a4",
+                    "leftValue": "={{ $json.Section }}",
+                    "rightValue": "c",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -96,
+        80
+      ],
+      "id": "c36c78ed-61f4-471b-9fbd-7fd2e1464a8d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json['Email address'] }}",
+        "subject": "Today schedule for classes",
+        "emailType": "text",
+        "message": "good morning student and the schedule for today is given below",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        352
+      ],
+      "id": "2094f223-20b7-4908-a2ba-c9f0794a9ef0",
+      "name": "Send a message",
+      "webhookId": "1511c837-caae-479c-bbd7-66e7bb946c74",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UMDYQKh3Vj6VZcKi",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "html",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        80
+      ],
+      "id": "da91fcfc-92a3-41bd-bdd4-a363d326e064",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1cv54K7bBZCHyt6dmnuHJPIKNQLrx384vnxz6KIphx9Q",
+          "mode": "list",
+          "cachedResultName": "time-table",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cv54K7bBZCHyt6dmnuHJPIKNQLrx384vnxz6KIphx9Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 101974914,
+          "mode": "list",
+          "cachedResultName": "class-c",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cv54K7bBZCHyt6dmnuHJPIKNQLrx384vnxz6KIphx9Q/edit#gid=101974914"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        288
+      ],
+      "id": "43a8ecec-e43f-45ab-9016-640eb5488705",
+      "name": "c",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "x3NHsXOOHCAxuGPu",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1cv54K7bBZCHyt6dmnuHJPIKNQLrx384vnxz6KIphx9Q",
+          "mode": "list",
+          "cachedResultName": "time-table",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cv54K7bBZCHyt6dmnuHJPIKNQLrx384vnxz6KIphx9Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1929762129,
+          "mode": "list",
+          "cachedResultName": "class-b",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cv54K7bBZCHyt6dmnuHJPIKNQLrx384vnxz6KIphx9Q/edit#gid=1929762129"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        128,
+        96
+      ],
+      "id": "8774ea73-f0a0-4823-8412-92f11765a292",
+      "name": "b",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "x3NHsXOOHCAxuGPu",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1cv54K7bBZCHyt6dmnuHJPIKNQLrx384vnxz6KIphx9Q",
+          "mode": "list",
+          "cachedResultName": "time-table",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cv54K7bBZCHyt6dmnuHJPIKNQLrx384vnxz6KIphx9Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "class-a",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cv54K7bBZCHyt6dmnuHJPIKNQLrx384vnxz6KIphx9Q/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        112,
+        -112
+      ],
+      "id": "fbc1c2bc-38eb-41b9-b951-5bf3c0f5eaa0",
+      "name": "a",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "x3NHsXOOHCAxuGPu",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1U6iPU3CE3A1IYR6l6c34ntX7YOg_qGwzHCe9Xr3_jT0",
+          "mode": "list",
+          "cachedResultName": "Total students data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1U6iPU3CE3A1IYR6l6c34ntX7YOg_qGwzHCe9Xr3_jT0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "current-attendance-list",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1U6iPU3CE3A1IYR6l6c34ntX7YOg_qGwzHCe9Xr3_jT0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -480,
+        -32
+      ],
+      "id": "b4d4bf17-d061-4c11-992d-838f13b873dc",
+      "name": "students-data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "x3NHsXOOHCAxuGPu",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "students-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "a",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "b",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "c",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "c": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "b": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "a": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "students-data": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f3ec8328-b028-444a-a3ce-4b75f6d40555",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "df78198297de5a366f7b3c871b94b67773920e279eac66e3435e9b64e4579409"
+  },
+  "id": "qvSS6FvX76nN4gpM",
+  "tags": []
+}
