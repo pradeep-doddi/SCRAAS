@@ -1,0 +1,415 @@
+{
+  "name": "weekly-update",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 10 * * SUN"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -3664,
+        272
+      ],
+      "id": "9e49915a-2004-4541-88eb-2dc8fe2a7a34",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1U6iPU3CE3A1IYR6l6c34ntX7YOg_qGwzHCe9Xr3_jT0",
+          "mode": "list",
+          "cachedResultName": "Total students data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1U6iPU3CE3A1IYR6l6c34ntX7YOg_qGwzHCe9Xr3_jT0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "current-attendance-list",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1U6iPU3CE3A1IYR6l6c34ntX7YOg_qGwzHCe9Xr3_jT0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -3440,
+        176
+      ],
+      "id": "bd39c368-ecc0-4c96-867d-54cbd4992d6f",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "x3NHsXOOHCAxuGPu",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const sections = {};\n\nfor (const item of items) {\n  const section = item.json.Section.toUpperCase();\n\n  if (!sections[section]) {\n    sections[section] = [];\n  }\n\n  sections[section].push(item.json);\n}\n\nreturn Object.keys(sections).map(section => ({\n  json: {\n    section,\n    students: sections[section]\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3216,
+        176
+      ],
+      "id": "d5ddf854-0279-4363-b462-db69da7ac597",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2992,
+        176
+      ],
+      "id": "c3e077d8-c5cb-4cbd-9602-9ecc4fde595b",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {
+          "headerRow": false
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -2096,
+        0
+      ],
+      "id": "3fd4b86c-d6a2-4b72-b327-d7c14ff7b671",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.teacherEmail }}",
+        "subject": "Weekly-attendance-report",
+        "emailType": "text",
+        "message": "good morning , this is the weekly  attendance report of the students present ",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1648,
+        176
+      ],
+      "id": "d4b6a05b-d3e2-4864-8cbb-e2bbe3ed0230",
+      "name": "Send a message",
+      "webhookId": "d694a9ed-e215-46cf-ab5e-a4ecf9abdc16",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UMDYQKh3Vj6VZcKi",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "14ZUqT7SUzjOwPEBuRWp-wg8vgOJ5l_-zkDbvhFaAWIw",
+          "mode": "list",
+          "cachedResultName": "teachers-data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14ZUqT7SUzjOwPEBuRWp-wg8vgOJ5l_-zkDbvhFaAWIw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "teachers-number-data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14ZUqT7SUzjOwPEBuRWp-wg8vgOJ5l_-zkDbvhFaAWIw/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -3216,
+        480
+      ],
+      "id": "f537842e-ca6f-4d98-8198-ed0ce711a2e9",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "x3NHsXOOHCAxuGPu",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const map = {};\n\nfor (const item of items) {\n  const className = item.json[\"class name\"];\n  const email = item.json[\"teacher email\"];\n\n  map[className] = email;\n}\n\nreturn [\n  {\n    json: {\n      teacherMap: map\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2992,
+        480
+      ],
+      "id": "23716e4b-a0db-4adf-860d-bfd25ff09a19",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2768,
+        96
+      ],
+      "id": "3860ab6c-064d-496d-8063-8ebb0449efd6",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const section = $json.section.toLowerCase(); // C → c\nconst teacherMap = $json.teacherMap || $('Code in JavaScript1').first().json.teacherMap;\nconst students = $json.students;\n\n// create ONE item per student → ONE Excel row\nreturn students.map(student => ({\n  json: {\n    section,\n    teacherEmail: teacherMap[section], // correct teacher\n    ...student                         // student fields\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2544,
+        96
+      ],
+      "id": "9d817535-a93f-4957-92bc-fbe39448fc34",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1872,
+        96
+      ],
+      "id": "eff595c0-da20-4663-bf8d-73e1d595aa16",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all();\n\n// Reduce multiple student rows to ONE email item\nreturn [\n  {\n    json: {\n      teacherEmail: allItems[0].json.teacherEmail\n    },\n    binary: allItems[0].binary\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2096,
+        192
+      ],
+      "id": "18500c08-2248-4917-a8b2-4d5bbcab3335",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const headers = Object.keys(items[0].json);\n\nreturn [\n  {\n    json: Object.fromEntries(headers.map(h => [h, h]))\n  },\n  ...items\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2320,
+        0
+      ],
+      "id": "d0dc882a-3500-40bb-b626-396bbff20da3",
+      "name": "Code in JavaScript4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "02c598fe-33b4-4fe0-82e5-4e7d5595bcd6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "df78198297de5a366f7b3c871b94b67773920e279eac66e3435e9b64e4579409"
+  },
+  "id": "H5gkkNE3Q7ibgn6c",
+  "tags": []
+}

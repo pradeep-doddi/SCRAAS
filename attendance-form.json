@@ -1,0 +1,285 @@
+{
+  "name": "attendance-form",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1OxfnD4qefZvSYFJ5XdotV1DWKtwdTPD8qmCVB70ioC0",
+          "mode": "list",
+          "cachedResultName": "absenties-list",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OxfnD4qefZvSYFJ5XdotV1DWKtwdTPD8qmCVB70ioC0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 952435258,
+          "mode": "list",
+          "cachedResultName": "Form responses 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OxfnD4qefZvSYFJ5XdotV1DWKtwdTPD8qmCVB70ioC0/edit#gid=952435258"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2384,
+        -64
+      ],
+      "id": "10a92960-a677-4293-8dd4-14a75dbe820e",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "Qh5Ak3ClnvvRX11e",
+          "name": "Google Sheets Trigger account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "instructions": "seperate the enter the roll numers of students into two json objects instead of single object\n",
+        "codeGeneratedForPrompt": "seperate the enter the roll numers of students into two json objects instead of single object\n",
+        "jsCode": "const items = $input.all();\nconst updatedItems = items.flatMap((item) => {\n  const rollNumbers =\n    item?.json[\"Enter the roll numbers of students\"].split(\"\\n\");\n  return rollNumbers.map((rollNumber) => {\n    return {\n      json: { ...item.json, \"Enter the roll numbers of students\": rollNumber },\n      pairedItem: item.pairedItem,\n    };\n  });\n});\nreturn updatedItems;\n"
+      },
+      "type": "n8n-nodes-base.aiTransform",
+      "typeVersion": 1,
+      "position": [
+        -2160,
+        -64
+      ],
+      "id": "bfc2ea50-dc01-4552-8de0-ec79a6672fac",
+      "name": "AI Transform"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "934090683116581",
+        "recipientPhoneNumber": "918688788625",
+        "textBody": "=your child is absent for today classes and his current attendance percentage is  {{ $json[\"attendance percentage\"] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -848,
+        32
+      ],
+      "id": "a3cbeb42-beba-4885-aa33-5982b80efd2f",
+      "name": "Send message",
+      "webhookId": "5c547b18-79b0-4990-807a-45d6c7e24677",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "I4L80SNX81sIsVdF",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get row(s) in sheet').item.json[\"Email address\"] }}",
+        "subject": "Information about absent to today's class",
+        "emailType": "text",
+        "message": "=dear  {{ $json.Name }}, you have been marked as absent for today's classes your current attendance is {{ $json[\"attendance percentage\"] }} and it is being reduced accordinly ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -864,
+        -176
+      ],
+      "id": "0158bef4-2c05-4eea-bd35-c89ad9b472e2",
+      "name": "Send a message",
+      "webhookId": "c5fa9104-0bde-4ce2-af02-5da52a15c0cd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UMDYQKh3Vj6VZcKi",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1U6iPU3CE3A1IYR6l6c34ntX7YOg_qGwzHCe9Xr3_jT0",
+          "mode": "list",
+          "cachedResultName": "Total students data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1U6iPU3CE3A1IYR6l6c34ntX7YOg_qGwzHCe9Xr3_jT0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "current-attendance-list",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1U6iPU3CE3A1IYR6l6c34ntX7YOg_qGwzHCe9Xr3_jT0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1712,
+        -64
+      ],
+      "id": "6e9872e9-a5a5-494b-a4cd-98f3d33dc275",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "x3NHsXOOHCAxuGPu",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    absentRolls: items\n      .map(i => i.json[\"Enter the roll numbers of students\"])\n      .join(',')\n      .split(',')\n      .map(r => r.trim())\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1936,
+        -64
+      ],
+      "id": "5f49ec5b-ffad-4fa8-8ffe-cc058275778d",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const students = $input.all().map((item) => item.json);\nconst absentRolls = $(\"Code in JavaScript\").all()[0]?.json?.absentRolls;\n\nstudents.forEach((student) => {\n  student[\"classes conducted\"] += 1;\n  if (absentRolls.includes(student[\"Roll no \"])) {\n    student.isabsent = true;\n  } else {\n    student.isabsent = false;\n    student[\"classes attended\"] += 1;\n  }\n  student[\"attendance percentage\"] =\n    (student[\"classes attended\"] / student[\"classes conducted\"]) * 100;\n});\n\nreturn students.map((student) => ({ json: student }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1488,
+        -64
+      ],
+      "id": "0aaf7bdc-42c1-49f2-9224-0a60ea910c3b",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ad278540-b35f-4eeb-b5cc-1de2e5d8b4f3",
+              "leftValue": "={{ $json.isabsent }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1264,
+        -64
+      ],
+      "id": "115ac33e-dabf-47ff-b57d-820a8cb2b0a5",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Transform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Transform": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f74a56f3-5199-4cc3-ba1a-5e0f824060d5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "df78198297de5a366f7b3c871b94b67773920e279eac66e3435e9b64e4579409"
+  },
+  "id": "1MffDCNIJuJxwhl2",
+  "tags": []
+}
